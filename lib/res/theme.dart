@@ -8,5 +8,11 @@ ThemeData theme = ThemeData(
   fontFamily: 'Mulish',
   scaffoldBackgroundColor: Colors.white,
   highlightColor: Colors.transparent,
-  splashColor: Colors.transparent
+  splashColor: Colors.transparent,
+  textTheme: TextTheme(
+    headline6: TextStyle(
+      color: titleColor,
+      fontSize: 16
+    )
+  )
 );
