@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geo_reminders/database/db_helper.dart';
 import 'package:geo_reminders/res/colors.dart';
 
 
@@ -43,7 +44,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                 indicatorSize: TabBarIndicatorSize.label,
                 indicatorPadding: EdgeInsets.only(right:10, left: -10, top: -10),
                 labelColor: primaryColor,
-                unselectedLabelColor: Color(0xFFB0B0B0),
+                unselectedLabelColor: disabledColor,
                 labelStyle: TextStyle(
                   fontSize: 30.0,
                   fontWeight: FontWeight.w600
