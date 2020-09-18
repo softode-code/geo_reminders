@@ -4,7 +4,6 @@ import 'package:geo_reminders/widgets/bottom_right_btn.dart';
 import 'package:geo_reminders/widgets/cross_button.dart';
 import 'package:geo_reminders/widgets/header_with_underline.dart';
 import 'package:geo_reminders/widgets/outline_input_field_with_title.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class NewLocation extends StatefulWidget {
   @override
@@ -119,16 +118,12 @@ class _NewLocationState extends State<NewLocation> {
                       ),
                       SizedBox(height: 20,),
                       Padding(
-                        padding: EdgeInsets.only(bottom:100),
+                        padding: EdgeInsets.only(bottom:20),
                         child: Container(
                           height: 300,
                           color: primaryColor.withOpacity(0.2),
-                          child: GoogleMap(
-                            mapType: MapType.hybrid,
-                            initialCameraPosition: CameraPosition(
-                              target: LatLng(40.688841, -74.044015),
-                              zoom: 11,
-                            ),
+                          child: Center(
+                            child: Text('Map to be displayed here.'),
                           ),
                         ),
                       )
