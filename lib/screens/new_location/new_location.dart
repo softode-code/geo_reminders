@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geo_reminders/res/colors.dart';
+import 'package:geo_reminders/services/geo_location.dart';
 import 'package:geo_reminders/widgets/bottom_right_btn.dart';
 import 'package:geo_reminders/widgets/cross_button.dart';
 import 'package:geo_reminders/widgets/header_with_underline.dart';
@@ -19,6 +20,14 @@ class _NewLocationState extends State<NewLocation> {
   String _coordinates = 'Coordinates';
 
   final _formkey = GlobalKey<FormState>();
+  final Map<String, Marker> _markers = {};
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    GeoService.getPermission();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,11 +133,13 @@ class _NewLocationState extends State<NewLocation> {
                           height: 300,
                           color: primaryColor.withOpacity(0.2),
                           child: GoogleMap(
-                            mapType: MapType.hybrid,
+                            mapType: MapType.normal,
                             initialCameraPosition: CameraPosition(
                               target: LatLng(40.688841, -74.044015),
                               zoom: 11,
                             ),
+                            myLocationButtonEnabled: true,
+                            myLocationEnabled: true,
                           ),
                         ),
                       )
