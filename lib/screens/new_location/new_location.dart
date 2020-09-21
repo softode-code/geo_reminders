@@ -20,7 +20,29 @@ class _NewLocationState extends State<NewLocation> {
   String _coordinates = 'Coordinates';
 
   final _formkey = GlobalKey<FormState>();
-  final Map<String, Marker> _markers = {};
+  static const LatLng _center = const LatLng(45.521563, -122.677433);
+  LatLng _lastMapPosition = _center;
+  Set<Marker> _marker = {Marker(
+    markerId: MarkerId(_center.toString()),
+    position: _center,
+    icon: BitmapDescriptor.defaultMarker
+  )};
+
+  void _onLocationTap(LatLng position){
+    setState(() {
+      _lastMapPosition = position;
+      _marker.clear();
+      _marker.add(Marker (
+        markerId: MarkerId(position.toString()),
+        position: position,
+        infoWindow: InfoWindow(
+          title: _locationName ?? 'New Location',
+        ),
+        icon: BitmapDescriptor.defaultMarker
+      ));
+    });
+  }
+
 
   @override
   void initState() {
@@ -31,16 +53,18 @@ class _NewLocationState extends State<NewLocation> {
 
   @override
   Widget build(BuildContext context) {
+    
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: SafeArea(
         child: Form(
           key: _formkey,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top:10, left: 15, right:15),
-                child: SingleChildScrollView(
+          child: SingleChildScrollView(
+              child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top:10, left: 15, right:15),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -54,7 +78,11 @@ class _NewLocationState extends State<NewLocation> {
                           setState(() {
                             _locationName = val;
                             if(_locationName != null && _coordinates != null) {
-                              _validData = true;
+                              if (_locationName.isNotEmpty){
+                                _validData = true;
+                                return;
+                              }
+                              _validData = false;
                             }
                           });
                         },
@@ -109,12 +137,16 @@ class _NewLocationState extends State<NewLocation> {
                           SizedBox(width:15),
                           Icon(Icons.location_on_outlined, color: hintColor, size: 26,),
                           SizedBox(width: 15),
-                          Text(
-                            _coordinates ?? 'Longitude, Latitude',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: _coordinates == null? hintColor : subtitleColor,
-                              fontWeight: _coordinates == null? FontWeight.normal : FontWeight.w600
+                          Flexible(
+                          child: Text(
+                              (_lastMapPosition.latitude.toString() + ','+ _lastMapPosition.longitude.toString()) ?? 'Longitude, Latitude',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: _coordinates == null? hintColor : subtitleColor,
+                                fontWeight: _coordinates == null? FontWeight.normal : FontWeight.w600
+                              ),
                             ),
                           )
                         ],
@@ -127,38 +159,46 @@ class _NewLocationState extends State<NewLocation> {
                         ),
                       ),
                       SizedBox(height: 20,),
-                      Padding(
-                        padding: EdgeInsets.only(bottom:100),
-                        child: Container(
-                          height: 300,
-                          color: primaryColor.withOpacity(0.2),
-                          child: GoogleMap(
-                            mapType: MapType.normal,
-                            initialCameraPosition: CameraPosition(
-                              target: LatLng(40.688841, -74.044015),
-                              zoom: 11,
+                      Container(
+                        height: size.height*0.45,
+                        child: Stack(
+                          children: [
+                            GoogleMap(
+                              markers: _marker,
+                              mapType: MapType.normal,
+                              initialCameraPosition: CameraPosition(
+                                target: _center,
+                                zoom: 11,
+                              ),
+                              myLocationButtonEnabled: true,
+                              myLocationEnabled: true,
+                              onTap: _onLocationTap,
                             ),
-                            myLocationButtonEnabled: true,
-                            myLocationEnabled: true,
-                          ),
+                          ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
-              ),
-              BottomRightButton(
-                text: 'Add',
-                iconData: Icons.add,
-                disabled: !_validData,
-                onPressed: (){
-                  //TODO: Add location to database
-                  if(_formkey.currentState.validate()){
-                    print('Add to database');
-                  }
-                },
-              ),
-            ],
+                SizedBox(height:20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    BottomRightButton(
+                      text: 'Add',
+                      iconData: Icons.add,
+                      disabled: !_validData,
+                      onPressed: (){
+                        //TODO: Add location to database
+                        if(_formkey.currentState.validate()){
+                          print('Add to database');
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
