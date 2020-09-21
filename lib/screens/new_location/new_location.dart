@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geo_reminders/database/db_helper.dart';
 import 'package:geo_reminders/models/location.dart';
 import 'package:geo_reminders/res/colors.dart';
 import 'package:geo_reminders/services/geo_location.dart';
@@ -47,7 +48,6 @@ class _NewLocationState extends State<NewLocation> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     GeoService.getPermission();
   }
@@ -189,8 +189,7 @@ class _NewLocationState extends State<NewLocation> {
                       text: 'Add',
                       iconData: Icons.add,
                       disabled: !_validData,
-                      onPressed: (){
-                        //TODO: Add location to database
+                      onPressed: () async{
                         if(_formkey.currentState.validate()){
                           Location location = Location(
                             colorCode: locationColors[_locationColorIndex].value,
@@ -198,7 +197,8 @@ class _NewLocationState extends State<NewLocation> {
                             latitude: _lastMapPosition.latitude,
                             longitude: _lastMapPosition.longitude,
                           );
-                          print(location.toMap());
+                          await DBHelper().addLocation(location);
+                          Navigator.pop(context);
                         }
                       },
                     ),

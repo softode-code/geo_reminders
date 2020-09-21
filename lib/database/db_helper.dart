@@ -46,4 +46,9 @@ class DBHelper {
     await db.execute('CREATE TABLE $REMINDERS_TABLE ($ID INTEGER PRIMARY KEY AUTOINCREMENT, $NAME TEXT NOT NULL, $HOUR INTEGER, $MINUTE INTEGER, $DAY INTEGER, $MONTH INTEGER, $YEAR INTEGER, $POSITION TEXT, $NOTE TEXT, $COMPLETED BOOLEAN, $LOCATION_ID INTEGER, FOREIGN KEY ($LOCATION_ID) REFERENCES $LOCATIONS_TABLE($ID))');
   }
 
+  Future addLocation(Location location) async{
+    Database database = await db;
+    return await database.insert(LOCATIONS_TABLE, location.toMap());
+  }
+
 }
