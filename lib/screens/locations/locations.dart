@@ -20,31 +20,97 @@ class Locations extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16.0,
                 color: subtitleColor,
-                fontWeight: FontWeight.w400
+                fontWeight: FontWeight.w600
               ),
             ),
+            SizedBox(height:20),
             StreamBuilder(
               stream: DBHelper().getLocations().asStream(),
               builder: (context, snapshot){
                 if (snapshot.hasData){
                   List<Location> locations = snapshot.data;
-                  for(int i=0; i< locations.length; i++){
-                    print(locations[i].toMap());
-                  }
                   return Expanded(
-                     child: ListView.builder(
-                      itemCount: locations.length,
-                      itemBuilder: (context, index){
-                        return Padding(
-                          padding: EdgeInsets.all(5),
-                          child: Text(
-                            locations[index].name,
-                            style: TextStyle(
-                              color: Colors.black
+                    child: GridView.count(
+                      childAspectRatio: 1.5,
+                      mainAxisSpacing: 24,
+                      crossAxisSpacing: 27,
+                      padding: EdgeInsets.all(20),
+                      crossAxisCount: 2,
+                      children: List.generate(
+                        locations.length,
+                        (index) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Color(locations[index].colorCode)
                             ),
-                          ),
-                        );
-                      }
+                            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  locations[index].name,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18
+                                  ),
+                                ),
+                                SizedBox(height:10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Latitude: ',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: Text(
+                                        locations[index].latitude.toString(),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Longitude: ',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12
+                                      ),
+                                    ),
+                                    Flexible(
+                                    child: Text(
+                                      locations[index].longitude.toString(),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                    )
+                                  ],
+                                )
+                              ],
+                              ),
+                          );
+                        }
+                       ),
                     ),
                   );
                 }
