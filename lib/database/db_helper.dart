@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:geo_reminders/models/location.dart';
 import 'package:sqflite/sqflite.dart';
@@ -42,13 +43,25 @@ class DBHelper {
 
   _onCreate(Database db, int version) async {
     await db.execute('PRAGMA foreign_keys = ON');
-    await db.execute('CREATE TABLE $LOCATIONS_TABLE ($LATITUDE DOUBLE NOT NULL, $LONGITUDE DOUBLE NOT NULL, $NAME TEXT, $COLOR_CODE TEXT, $ID INTEGER PRIMARY KEY AUTOINCREMENT)');
+    await db.execute('CREATE TABLE $LOCATIONS_TABLE ($LATITUDE DOUBLE NOT NULL, $LONGITUDE DOUBLE NOT NULL, $NAME TEXT, $COLOR_CODE INTEGER, $ID INTEGER PRIMARY KEY AUTOINCREMENT)');
     await db.execute('CREATE TABLE $REMINDERS_TABLE ($ID INTEGER PRIMARY KEY AUTOINCREMENT, $NAME TEXT NOT NULL, $HOUR INTEGER, $MINUTE INTEGER, $DAY INTEGER, $MONTH INTEGER, $YEAR INTEGER, $POSITION TEXT, $NOTE TEXT, $COMPLETED BOOLEAN, $LOCATION_ID INTEGER, FOREIGN KEY ($LOCATION_ID) REFERENCES $LOCATIONS_TABLE($ID))');
   }
 
   Future addLocation(Location location) async{
     Database database = await db;
     return await database.insert(LOCATIONS_TABLE, location.toMap());
+  }
+
+  Future<List<Location>> getLocations() async {
+    Database database = await db;
+    List<Map> maps = await database.query(LOCATIONS_TABLE);
+    List<Location> locations = [];
+    if(maps.length>0){
+      for (int i=0; i< maps.length; i++){
+        locations.add(Location.fromMap(maps[i]));
+      }
+    }
+    return locations;
   }
 
 }
