@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geo_reminders/models/location.dart';
 import 'package:geo_reminders/res/colors.dart';
 import 'package:geo_reminders/services/geo_location.dart';
 import 'package:geo_reminders/widgets/bottom_right_btn.dart';
@@ -191,7 +192,13 @@ class _NewLocationState extends State<NewLocation> {
                       onPressed: (){
                         //TODO: Add location to database
                         if(_formkey.currentState.validate()){
-                          print('Add to database');
+                          Location location = Location(
+                            colorCode: locationColors[_locationColorIndex].value,
+                            name: _locationName,
+                            latitude: _lastMapPosition.latitude,
+                            longitude: _lastMapPosition.longitude,
+                          );
+                          print(location.toMap());
                         }
                       },
                     ),

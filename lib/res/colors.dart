@@ -10,10 +10,10 @@ Color titleColor = Color(0xCC000000);
 //66%
 Color hintColor = Color(0x99000000);
 List<Color> locationColors = [
-  Color(0xFF1CA7C4),
-  Color(0xFF009A8E),
-  Color(0xFF9AA7AF),
-  Color(0xFFCB9B6B),
-  Color(0xFFEC7D4F),
-  Color(0xFFBC5560)
+  Color(4280068036),
+  Color(4278229646),
+  Color(4288325551),
+  Color(4291533675),
+  Color(4293688655),
+  Color(4290532704)
 ];

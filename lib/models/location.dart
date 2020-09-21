@@ -5,7 +5,7 @@ class Location{
   String name;
   double latitude;
   double longitude;
-  String colorCode;
+  int colorCode;
 
   Location({this.id, this.name, this.colorCode, this.latitude, this.longitude});
 
