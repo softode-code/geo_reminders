@@ -120,8 +120,8 @@ class _NewReminderState extends State<NewReminder> {
                                         'Pick a time'
                                       ],
                                       onPressed: [
-                                        ()=> print('today'),
-                                        ()=> print('Pick time'),
+                                        ()=> closeMenu(),
+                                        ()=> closeMenu(),
                                       ],
                                     )
                                   );
@@ -185,11 +185,11 @@ class _NewReminderState extends State<NewReminder> {
                                             'Pick a date'
                                           ],
                                           onPressed: [
-                                            ()=> print('0'),
-                                            ()=> print('1'),
-                                            ()=> print('2'),
-                                            ()=> print('3'),
-                                            ()=> print('4'),
+                                            ()=> closeMenu(),
+                                            ()=> closeMenu(),
+                                            ()=> closeMenu(),
+                                            ()=> closeMenu(),
+                                            ()=> closeMenu(),
                                           ],
                                         )
                                       );
