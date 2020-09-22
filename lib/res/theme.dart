@@ -18,6 +18,11 @@ ThemeData theme = ThemeData(
       color: hintColor,
       fontSize: 16,
       fontWeight: FontWeight.normal
+    ),
+    subtitle2: TextStyle(
+      color: disabledColor,
+      fontSize: 13,
+      fontWeight: FontWeight.normal
     )
   )
 );
