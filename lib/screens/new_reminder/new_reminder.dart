@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geo_reminders/res/colors.dart';
-import 'package:geo_reminders/screens/new_reminder/due_date_menu.dart';
+import 'package:geo_reminders/widgets/custom_menu.dart';
 import 'package:geo_reminders/screens/new_reminder/location_status.dart';
 import 'package:geo_reminders/widgets/cross_button.dart';
 import 'package:geo_reminders/widgets/header_with_underline.dart';
@@ -25,39 +25,41 @@ class _NewReminderState extends State<NewReminder> {
   Offset buttonPosition;
   bool isMenuOpen = false;
   Size buttonSize;
-  GlobalKey _key = LabeledGlobalKey("button_icon");
+  GlobalKey dueDateKey = LabeledGlobalKey("button_icon");
 
-  findButton(){
-    RenderBox renderBox = _key.currentContext.findRenderObject();
+  findButton(GlobalKey key){
+    RenderBox renderBox = key.currentContext.findRenderObject();
     buttonSize = renderBox.size;
     buttonPosition = renderBox.localToGlobal(Offset.zero);
   }
 
-  OverlayEntry _overlayEntryBuilder() {
-  return OverlayEntry(builder: (context) {
-    return Positioned(
-      top: buttonPosition.dy + buttonSize.height,
-      left: buttonPosition.dx,
-      width:buttonSize.width,
-      child: Material(
-        color: Colors.transparent,
-        child: DueDateMenu()
-      ),
-     );
-    },
-  );
-}
+  OverlayEntry _overlayEntryBuilder(Widget menu) {
+    return OverlayEntry(builder: (context) {
+      return Positioned(
+        top: buttonPosition.dy + buttonSize.height,
+        left: buttonPosition.dx,
+        width:buttonSize.width,
+        child: Material(
+          color: Colors.transparent,
+          child: menu
+        ),
+      );
+      },
+    );
+  }
 
-void openMenu() {
-  findButton();
-  _overlayEntry = _overlayEntryBuilder();
-  Overlay.of(context).insert(_overlayEntry);
-  isMenuOpen = !isMenuOpen;
-}
-void closeMenu() {
-  _overlayEntry.remove();
-  isMenuOpen = !isMenuOpen;
-}
+  void openMenu(GlobalKey key, Widget menu) {
+    findButton(key);
+    _overlayEntry = _overlayEntryBuilder(menu);
+    Overlay.of(context).insert(_overlayEntry);
+    isMenuOpen = !isMenuOpen;
+  }
+  void closeMenu() {
+    _overlayEntry.remove();
+    isMenuOpen = !isMenuOpen;
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -112,36 +114,66 @@ void closeMenu() {
                         ),
                       ),
                       SizedBox(height: 20,),
-                      Text(
-                        'Due Date',
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      SizedBox(height:10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(width:15),
-                          Icon(Icons.calendar_today, color: hintColor, size: 26,),
-                          //SvgPicture.asset('assets/bell.svg', height: 26, width: 26,),
-                          SizedBox(width:15),
-                          Expanded(
-                                                      child: InkWell(
-                              onTap: (){
-                                if (isMenuOpen) {
-                                  closeMenu();
-                                } else {
-                                  openMenu();
-                                }
-                              },
-                              child: Container(
-                                key: _key,
-                                child: Text(
-                                  'Set a due date',
-                                  style: Theme.of(context).textTheme.subtitle1,
+                          Text(
+                            'Due Date',
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                          SizedBox(height:10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(width:15),
+                              Icon(Icons.date_range, color: hintColor, size: 26,),
+                              //SvgPicture.asset('assets/bell.svg', height: 26, width: 26,),
+                              SizedBox(width:15),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: (){
+                                    if (isMenuOpen) {
+                                      closeMenu();
+                                    } else {
+                                      openMenu(
+                                        dueDateKey,
+                                        CustomMenu(
+                                          menuIcons: [
+                                            Icons.today_outlined,
+                                            Icons.calendar_today_outlined,
+                                            Icons.next_week_outlined,
+                                            Icons.repeat_rounded,
+                                            Icons.date_range_outlined
+                                          ],
+                                          menuTitles: [
+                                            'Today',
+                                            'Tomorrow',
+                                            'Next Week',
+                                            'Everyday',
+                                            'Pick a date'
+                                          ],
+                                          onPressed: [
+                                            ()=> print('0'),
+                                            ()=> print('1'),
+                                            ()=> print('2'),
+                                            ()=> print('3'),
+                                            ()=> print('4'),
+                                          ],
+                                        )
+                                      );
+                                    }
+                                  },
+                                  child: Container(
+                                    key: dueDateKey,
+                                    child: Text(
+                                      'Set a due date',
+                                      style: Theme.of(context).textTheme.subtitle1,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          )
+                              )
+                            ],
+                          ),
                         ],
                       ),
                       Padding(
