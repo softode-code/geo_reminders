@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:geo_reminders/database/db_helper.dart';
 import 'package:geo_reminders/res/colors.dart';
 import 'package:geo_reminders/screens/locations/locations.dart';
+import 'package:geo_reminders/screens/reminders/reminders.dart';
 
 
 class Home extends StatefulWidget {
@@ -61,7 +61,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
               body: TabBarView(
                 controller: _controller,
                 children: [
-                  Center(child: Text('Reminders')),
+                  Reminders(),
                   Locations(),
                 ],
               )

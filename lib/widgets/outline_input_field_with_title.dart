@@ -30,6 +30,11 @@ class OutlineInputFieldWithTitle extends StatelessWidget {
           maxLines: 1,
           validator: validator,
           onChanged: onChanged,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.black
+          ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(

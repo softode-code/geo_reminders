@@ -13,6 +13,11 @@ ThemeData theme = ThemeData(
     headline6: TextStyle(
       color: titleColor,
       fontSize: 16
+    ),
+    subtitle1: TextStyle(
+      color: hintColor,
+      fontSize: 16,
+      fontWeight: FontWeight.normal
     )
   )
 );
