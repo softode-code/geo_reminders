@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geo_reminders/res/colors.dart';
+import 'package:geo_reminders/widgets/bottom_right_btn.dart';
 import 'package:geo_reminders/widgets/custom_menu.dart';
 import 'package:geo_reminders/screens/new_reminder/location_status.dart';
 import 'package:geo_reminders/widgets/cross_button.dart';
@@ -252,6 +253,18 @@ class _NewReminderState extends State<NewReminder> {
                       ),
                     ],
                   ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    BottomRightButton(
+                      iconData: Icons.add,
+                      text: 'Add reminder',
+                      onPressed: (){
+                        //TODO: add reminder to database and set a notification
+                      },
+                    ),
+                  ],
                 )
               ],
             ),
