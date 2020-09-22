@@ -28,6 +28,7 @@ class _NewReminderState extends State<NewReminder> {
   Size buttonSize;
   GlobalKey dueDateKey = LabeledGlobalKey("due_date");
   GlobalKey remindMeKey = LabeledGlobalKey('remind_me');
+  GlobalKey pickLocationKey = LabeledGlobalKey('pick_location');
 
   findButton(GlobalKey key){
     RenderBox renderBox = key.currentContext.findRenderObject();
@@ -227,9 +228,39 @@ class _NewReminderState extends State<NewReminder> {
                           SizedBox(width:15),
                           Icon(Icons.location_on_outlined, color: hintColor, size: 26,),
                           SizedBox(width:15),
-                          Text(
-                            'Pick a location',
-                            style: Theme.of(context).textTheme.subtitle1,
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                if (isMenuOpen) {
+                                  closeMenu();
+                                } else {
+                                  openMenu(
+                                    pickLocationKey,
+                                    CustomMenu(
+                                      menuIcons: [
+                                        Icons.location_on_outlined,
+                                        Icons.location_searching
+                                      ],
+                                      menuTitles: [
+                                        'Choose from saved locations',
+                                        'Pick a Location'
+                                      ],
+                                      onPressed: [
+                                        ()=> closeMenu(),
+                                        ()=> closeMenu(),
+                                      ],
+                                    )
+                                  );
+                                }
+                              },
+                              child: Container(
+                                key: pickLocationKey,
+                                child: Text(
+                                  'Pick a location',
+                                  style: Theme.of(context).textTheme.subtitle1,
+                                ),
+                              ),
+                            ),
                           )
                         ],
                       ),
