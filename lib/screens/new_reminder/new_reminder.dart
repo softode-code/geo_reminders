@@ -25,7 +25,8 @@ class _NewReminderState extends State<NewReminder> {
   Offset buttonPosition;
   bool isMenuOpen = false;
   Size buttonSize;
-  GlobalKey dueDateKey = LabeledGlobalKey("button_icon");
+  GlobalKey dueDateKey = LabeledGlobalKey("due_date");
+  GlobalKey remindMeKey = LabeledGlobalKey('remind_me');
 
   findButton(GlobalKey key){
     RenderBox renderBox = key.currentContext.findRenderObject();
@@ -100,9 +101,39 @@ class _NewReminderState extends State<NewReminder> {
                           SizedBox(width:15),
                           SvgPicture.asset('assets/bell.svg', height: 26, width: 26,),
                           SizedBox(width:15),
-                          Text(
-                            'Add time',
-                            style: Theme.of(context).textTheme.subtitle1,
+                          Expanded(
+                            child: InkWell(
+                              onTap: (){
+                                if (isMenuOpen) {
+                                  closeMenu();
+                                } else {
+                                  openMenu(
+                                    remindMeKey,
+                                    CustomMenu(
+                                      menuIcons: [
+                                        Icons.today_outlined,
+                                        Icons.alarm
+                                      ],
+                                      menuTitles: [
+                                        'Today (Location based)',
+                                        'Pick a time'
+                                      ],
+                                      onPressed: [
+                                        ()=> print('today'),
+                                        ()=> print('Pick time'),
+                                      ],
+                                    )
+                                  );
+                                }
+                              },
+                              child: Container(
+                                key: remindMeKey,
+                                child: Text(
+                                  'Add time',
+                                  style: Theme.of(context).textTheme.subtitle1,
+                                ),
+                              ),
+                            ),
                           )
                         ],
                       ),
