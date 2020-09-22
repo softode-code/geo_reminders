@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geo_reminders/res/colors.dart';
+import 'package:geo_reminders/screens/pick_location/pick_location.dart';
 import 'package:geo_reminders/widgets/bottom_right_btn.dart';
 import 'package:geo_reminders/widgets/custom_menu.dart';
 import 'package:geo_reminders/screens/new_reminder/location_status.dart';
@@ -247,7 +248,10 @@ class _NewReminderState extends State<NewReminder> {
                                       ],
                                       onPressed: [
                                         ()=> closeMenu(),
-                                        ()=> closeMenu(),
+                                        () {
+                                          closeMenu();
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=> PickLocation()));
+                                        },
                                       ],
                                     )
                                   );
