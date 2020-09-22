@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geo_reminders/res/colors.dart';
+import 'package:geo_reminders/screens/new_reminder/location_status.dart';
 import 'package:geo_reminders/widgets/cross_button.dart';
 import 'package:geo_reminders/widgets/header_with_underline.dart';
 import 'package:geo_reminders/widgets/outline_input_field_with_title.dart';
@@ -15,6 +16,7 @@ class _NewReminderState extends State<NewReminder> {
   final _formkey = GlobalKey<FormState>();
   String _reminderName;
   int _locationStatus;
+  String _note;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class _NewReminderState extends State<NewReminder> {
                     children: [
                       CrossButton(),
                       HeaderWithUnderline(text: 'New Reminder'),
-                      SizedBox(height: 30,),
+                      SizedBox(height: 50,),
                       OutlineInputFieldWithTitle(
                         title: 'Reminder',
                         hint: 'Add a reminder',
@@ -132,16 +134,34 @@ class _NewReminderState extends State<NewReminder> {
                         'Note',
                         style: Theme.of(context).textTheme.headline6,
                       ),
-                      SizedBox(height:10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(width:15),
-                          Icon(Icons.notes_outlined, color: hintColor, size: 26,),
+                          Padding(
+                            padding: const EdgeInsets.only(top:10),
+                            child: Icon(Icons.notes_outlined, color: hintColor, size: 26,),
+                          ),
                           SizedBox(width:15),
-                          Text(
-                            'Add a note',
-                            style: Theme.of(context).textTheme.subtitle1,
+                          Expanded(
+                            child: TextFormField(
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: subtitleColor
+                              ),
+                              maxLines: 5,
+                              onChanged: (val)=> setState(()=>_note = val),
+                              validator: (val) => null,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                hintText: 'Add a note',
+                                hintStyle: Theme.of(context).textTheme.subtitle1
+                              ),
+                            ),
                           )
                         ],
                       ),
@@ -153,101 +173,6 @@ class _NewReminderState extends State<NewReminder> {
           ),
         )
       ),
-    );
-  }
-}
-
-class LocationStatus extends StatelessWidget {
-  LocationStatus({
-    Key key,
-    @required int locationStatus, this.entering, this.at, this.leaving,
-  }) : locationStatus = locationStatus, super(key: key);
-
-  int locationStatus;
-  final Function entering;
-  final Function at;
-  final Function leaving;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4.0),
-            color: Colors.transparent,
-            border: Border.all(
-              color: Colors.black.withOpacity(0.1),
-              width: 1
-            )
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              InkWell(
-                onTap: entering,
-                child: Container(
-                  decoration: locationStatus != null? ( locationStatus == 1 ? BoxDecoration(
-                    color: primaryLight,
-                    borderRadius: BorderRadius.only(topLeft:Radius.circular(4), bottomLeft:Radius.circular(4))
-                  ) : null ) : null,
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    'Entering',
-                    style: locationStatus != null ? ( 
-                      locationStatus == 1 ? Theme.of(context).textTheme.subtitle2.copyWith(color: Colors.white) : Theme.of(context).textTheme.subtitle2
-                    ) : Theme.of(context).textTheme.subtitle2
-                  ),
-                ),
-              ),
-              Container(
-                width: 1,
-                height: 25,
-                color: Colors.black.withOpacity(0.1),
-
-              ),
-              InkWell(
-                onTap: at,
-                child: Container(
-                  decoration: locationStatus != null? ( locationStatus == 2 ? BoxDecoration(
-                      color: primaryLight,
-                    ) : null ) : null,
-                  padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                  child: Text(
-                    'At',
-                    style: locationStatus != null ? ( 
-                      locationStatus == 2 ? Theme.of(context).textTheme.subtitle2.copyWith(color: Colors.white) : Theme.of(context).textTheme.subtitle2
-                    ) : Theme.of(context).textTheme.subtitle2
-                  ),
-                ),
-              ),
-               Container(
-                width: 1,
-                height: 25,
-                color: Colors.black.withOpacity(0.1),
-                
-              ),
-              InkWell(
-                onTap:leaving,
-                child: Container(
-                  decoration: locationStatus != null? ( locationStatus == 3 ? BoxDecoration(
-                      color: primaryLight,
-                      borderRadius: BorderRadius.only(topRight:Radius.circular(4), bottomRight:Radius.circular(4))
-                    ) : null ) : null,
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    'Leaving',
-                    style: locationStatus != null ? ( 
-                      locationStatus == 3 ? Theme.of(context).textTheme.subtitle2.copyWith(color: Colors.white) : Theme.of(context).textTheme.subtitle2
-                    ) : Theme.of(context).textTheme.subtitle2
-                  ),
-                ),
-              )
-            ],
-          )
-        )
-      ],
     );
   }
 }
