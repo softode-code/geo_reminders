@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geo_reminders/res/colors.dart';
+import 'package:geo_reminders/screens/new_reminder/due_date_menu.dart';
 import 'package:geo_reminders/screens/new_reminder/location_status.dart';
 import 'package:geo_reminders/widgets/cross_button.dart';
 import 'package:geo_reminders/widgets/header_with_underline.dart';
 import 'package:geo_reminders/widgets/outline_input_field_with_title.dart';
+
+import 'add_note.dart';
 
 class NewReminder extends StatefulWidget {
   @override
@@ -17,6 +20,44 @@ class _NewReminderState extends State<NewReminder> {
   String _reminderName;
   int _locationStatus;
   String _note;
+
+  OverlayEntry _overlayEntry;
+  Offset buttonPosition;
+  bool isMenuOpen = false;
+  Size buttonSize;
+  GlobalKey _key = LabeledGlobalKey("button_icon");
+
+  findButton(){
+    RenderBox renderBox = _key.currentContext.findRenderObject();
+    buttonSize = renderBox.size;
+    buttonPosition = renderBox.localToGlobal(Offset.zero);
+  }
+
+  OverlayEntry _overlayEntryBuilder() {
+  return OverlayEntry(builder: (context) {
+    return Positioned(
+      top: buttonPosition.dy + buttonSize.height,
+      left: buttonPosition.dx,
+      width:buttonSize.width,
+      child: Material(
+        color: Colors.transparent,
+        child: DueDateMenu()
+      ),
+     );
+    },
+  );
+}
+
+void openMenu() {
+  findButton();
+  _overlayEntry = _overlayEntryBuilder();
+  Overlay.of(context).insert(_overlayEntry);
+  isMenuOpen = !isMenuOpen;
+}
+void closeMenu() {
+  _overlayEntry.remove();
+  isMenuOpen = !isMenuOpen;
+}
 
   @override
   Widget build(BuildContext context) {
@@ -83,9 +124,23 @@ class _NewReminderState extends State<NewReminder> {
                           Icon(Icons.calendar_today, color: hintColor, size: 26,),
                           //SvgPicture.asset('assets/bell.svg', height: 26, width: 26,),
                           SizedBox(width:15),
-                          Text(
-                            'Set a due date',
-                            style: Theme.of(context).textTheme.subtitle1,
+                          Expanded(
+                                                      child: InkWell(
+                              onTap: (){
+                                if (isMenuOpen) {
+                                  closeMenu();
+                                } else {
+                                  openMenu();
+                                }
+                              },
+                              child: Container(
+                                key: _key,
+                                child: Text(
+                                  'Set a due date',
+                                  style: Theme.of(context).textTheme.subtitle1,
+                                ),
+                              ),
+                            ),
                           )
                         ],
                       ),
@@ -129,41 +184,8 @@ class _NewReminderState extends State<NewReminder> {
                         ),
                       ),
                       SizedBox(height: 20,),
-
-                      Text(
-                        'Note',
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(width:15),
-                          Padding(
-                            padding: const EdgeInsets.only(top:10),
-                            child: Icon(Icons.notes_outlined, color: hintColor, size: 26,),
-                          ),
-                          SizedBox(width:15),
-                          Expanded(
-                            child: TextFormField(
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: subtitleColor
-                              ),
-                              maxLines: 5,
-                              onChanged: (val)=> setState(()=>_note = val),
-                              validator: (val) => null,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                hintText: 'Add a note',
-                                hintStyle: Theme.of(context).textTheme.subtitle1
-                              ),
-                            ),
-                          )
-                        ],
+                      AddNote(
+                        onChange: (val)=> setState(()=>_note = val),
                       ),
                     ],
                   ),
