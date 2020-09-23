@@ -24,6 +24,8 @@ class _NewReminderState extends State<NewReminder> {
   int _locationStatus;
   String _note;
   LatLng _coordinates;
+  TimeOfDay _timeOfDay;
+  bool _remindToday = false;
 
   OverlayEntry _overlayEntry;
   Offset buttonPosition;
@@ -129,8 +131,25 @@ class _NewReminderState extends State<NewReminder> {
                                         'Pick a time'
                                       ],
                                       onPressed: [
-                                        ()=> closeMenu(),
-                                        ()=> closeMenu(),
+                                        (){
+                                          setState((){
+                                            _timeOfDay = null;
+                                            _remindToday = true;
+                                          });
+                                          closeMenu();
+                                        },
+                                        () async{
+                                          closeMenu();
+                                          await showTimePicker(
+                                            context: context, initialTime: _timeOfDay ?? TimeOfDay.now())
+                                            .then((value) {
+                                              setState(() {
+                                                _timeOfDay = value ?? _timeOfDay;
+                                                _remindToday = false;
+                                              });
+                                            });
+                                          
+                                        },
                                       ],
                                     )
                                   );
@@ -139,7 +158,9 @@ class _NewReminderState extends State<NewReminder> {
                               child: Container(
                                 key: remindMeKey,
                                 child: Text(
-                                  'Add time',
+                                  _timeOfDay == null ? ( _remindToday ? 'Today (Location based)' : 'Add time') : (
+                                    _timeOfDay.hour.toString() +':' + _timeOfDay.minute.toString()
+                                  ),
                                   style: Theme.of(context).textTheme.subtitle1,
                                 ),
                               ),
