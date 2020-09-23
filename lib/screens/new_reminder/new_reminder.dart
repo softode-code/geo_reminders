@@ -8,6 +8,7 @@ import 'package:geo_reminders/screens/new_reminder/location_status.dart';
 import 'package:geo_reminders/widgets/cross_button.dart';
 import 'package:geo_reminders/widgets/header_with_underline.dart';
 import 'package:geo_reminders/widgets/outline_input_field_with_title.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'add_note.dart';
 
@@ -22,6 +23,7 @@ class _NewReminderState extends State<NewReminder> {
   String _reminderName;
   int _locationStatus;
   String _note;
+  LatLng _coordinates;
 
   OverlayEntry _overlayEntry;
   Offset buttonPosition;
@@ -63,6 +65,11 @@ class _NewReminderState extends State<NewReminder> {
     isMenuOpen = !isMenuOpen;
   }
 
+  void updateCoordinates(LatLng coordinates){
+    setState(() {
+      _coordinates = coordinates;
+    });
+  }
 
 
   @override
@@ -250,7 +257,12 @@ class _NewReminderState extends State<NewReminder> {
                                         ()=> closeMenu(),
                                         () {
                                           closeMenu();
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)=> PickLocation()));
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context)=> PickLocation(setCoordinates: updateCoordinates,)
+                                            )
+                                            );
                                         },
                                       ],
                                     )
@@ -260,8 +272,14 @@ class _NewReminderState extends State<NewReminder> {
                               child: Container(
                                 key: pickLocationKey,
                                 child: Text(
-                                  'Pick a location',
-                                  style: Theme.of(context).textTheme.subtitle1,
+                                  _coordinates != null ? (_coordinates.latitude.toString() + ','+ _coordinates.longitude.toString()) :'Pick a location',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: _coordinates != null ? TextStyle(
+                                    color: subtitleColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                  ) :Theme.of(context).textTheme.subtitle1,
                                 ),
                               ),
                             ),

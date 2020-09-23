@@ -7,8 +7,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
 class PickLocation extends StatefulWidget {
+  const PickLocation({Key key, this.setCoordinates}) : super(key: key);
+
   @override
   _PickLocationState createState() => _PickLocationState();
+  
+  final Function setCoordinates;
 }
 
 class _PickLocationState extends State<PickLocation> {
@@ -113,7 +117,10 @@ class _PickLocationState extends State<PickLocation> {
                   BottomRightButton(
                     text: 'Done',
                     iconData: Icons.done,
-                    onPressed: (){},
+                    onPressed: () {
+                      widget.setCoordinates(_lastMapPosition);
+                      Navigator.pop(context);
+                    } ,
                   )
                 ],
               )
