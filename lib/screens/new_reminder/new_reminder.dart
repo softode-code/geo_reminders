@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geo_reminders/models/location.dart';
 import 'package:geo_reminders/res/colors.dart';
+import 'package:geo_reminders/screens/choose_from_locations/pick_from_saved_locations.dart';
 import 'package:geo_reminders/screens/pick_location/pick_location.dart';
 import 'package:geo_reminders/widgets/bottom_right_btn.dart';
 import 'package:geo_reminders/widgets/custom_menu.dart';
@@ -28,6 +30,7 @@ class _NewReminderState extends State<NewReminder> {
   bool _remindToday = false;
   DateTime _dateTime;
   bool _everyday = false;
+  Location _location;
 
   OverlayEntry _overlayEntry;
   Offset buttonPosition;
@@ -72,6 +75,7 @@ class _NewReminderState extends State<NewReminder> {
   void updateCoordinates(LatLng coordinates){
     setState(() {
       _coordinates = coordinates;
+      _location = null;
     });
   }
 
@@ -314,7 +318,19 @@ class _NewReminderState extends State<NewReminder> {
                                         'Pick a Location'
                                       ],
                                       onPressed: [
-                                        ()=> closeMenu(),
+                                        () async {
+                                          closeMenu();
+                                          await Navigator.push(context, MaterialPageRoute(
+                                            builder: (context) => PickFromSavedLocations(
+                                              onPick: (location) {
+                                                setState(() {
+                                                  _location = location;
+                                                  _coordinates = null;
+                                                });
+                                              },
+                                            )
+                                          ));
+                                        },
                                         () {
                                           closeMenu();
                                           Navigator.push(
@@ -332,10 +348,12 @@ class _NewReminderState extends State<NewReminder> {
                               child: Container(
                                 key: pickLocationKey,
                                 child: Text(
-                                  _coordinates != null ? (_coordinates.latitude.toString() + ','+ _coordinates.longitude.toString()) :'Pick a location',
+                                  _coordinates != null ? (_coordinates.latitude.toString() + ','+ _coordinates.longitude.toString()) :(
+                                    _location != null ? _location.name :'Pick a location'
+                                  ),
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
-                                  style: _coordinates != null ? TextStyle(
+                                  style: _coordinates != null || _location != null ? TextStyle(
                                     color: subtitleColor,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 16,
