@@ -26,6 +26,8 @@ class _NewReminderState extends State<NewReminder> {
   LatLng _coordinates;
   TimeOfDay _timeOfDay;
   bool _remindToday = false;
+  DateTime _dateTime;
+  bool _everyday = false;
 
   OverlayEntry _overlayEntry;
   Offset buttonPosition;
@@ -215,11 +217,46 @@ class _NewReminderState extends State<NewReminder> {
                                             'Pick a date'
                                           ],
                                           onPressed: [
-                                            ()=> closeMenu(),
-                                            ()=> closeMenu(),
-                                            ()=> closeMenu(),
-                                            ()=> closeMenu(),
-                                            ()=> closeMenu(),
+                                            () {
+                                              closeMenu();
+                                              setState(() {
+                                                _everyday = false;
+                                                _dateTime = DateTime.now();
+                                              });
+                                            },
+                                            () {
+                                              closeMenu();
+                                              setState(() {
+                                                _everyday = false;
+                                                _dateTime = DateTime.now().add(Duration(days: 1));
+                                              });
+                                            },
+                                            () {
+                                              closeMenu();
+                                              setState(() {
+                                                _everyday = false;
+                                                _dateTime = DateTime.now().add(Duration(days: 7));
+                                              });
+                                            },
+                                            (){
+                                              closeMenu();
+                                              setState(() {
+                                                _everyday = true;
+                                                _dateTime = null;
+                                              });
+                                            },
+                                            () async{
+                                              closeMenu();
+                                              await showDatePicker(
+                                                context: context, initialDate: _dateTime ?? DateTime.now(),
+                                                 firstDate: DateTime.now(), lastDate: DateTime.now().add(Duration(days: 365*5))
+                                              ).then((value) {
+                                                setState(() {
+                                                  _everyday = false;
+                                                  _dateTime = value ?? _dateTime;
+                                                });
+                                              });
+                                            },
                                           ],
                                         )
                                       );
@@ -228,7 +265,9 @@ class _NewReminderState extends State<NewReminder> {
                                   child: Container(
                                     key: dueDateKey,
                                     child: Text(
-                                      'Set a due date',
+                                      _dateTime == null ? ( _everyday ? 'Everyday' : 'Set a due date') :(
+                                        _dateTime.day.toString() +' ' + _dateTime.month.toString() +', '+_dateTime.year.toString()
+                                      ),
                                       style: Theme.of(context).textTheme.subtitle1,
                                     ),
                                   ),
