@@ -167,7 +167,7 @@ class _NewReminderState extends State<NewReminder> {
                                   _timeOfDay == null ? ( _remindToday ? 'Today (Location based)' : 'Add time') : (
                                     _timeOfDay.hour.toString() +':' + _timeOfDay.minute.toString()
                                   ),
-                                  style: Theme.of(context).textTheme.subtitle1,
+                                  style: _timeOfDay != null || _remindToday ? Theme.of(context).textTheme.headline5 : Theme.of(context).textTheme.subtitle1,
                                 ),
                               ),
                             ),
@@ -272,7 +272,7 @@ class _NewReminderState extends State<NewReminder> {
                                       _dateTime == null ? ( _everyday ? 'Everyday' : 'Set a due date') :(
                                         _dateTime.day.toString() +' ' + _dateTime.month.toString() +', '+_dateTime.year.toString()
                                       ),
-                                      style: Theme.of(context).textTheme.subtitle1,
+                                      style: _dateTime != null || _everyday ? Theme.of(context).textTheme.headline5: Theme.of(context).textTheme.subtitle1,
                                     ),
                                   ),
                                 ),

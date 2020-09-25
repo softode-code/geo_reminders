@@ -14,6 +14,11 @@ ThemeData theme = ThemeData(
       color: titleColor,
       fontSize: 16
     ),
+    headline5: TextStyle(
+      color: subtitleColor,
+      fontSize: 16,
+      fontWeight: FontWeight.w600
+    ),
     subtitle1: TextStyle(
       color: hintColor,
       fontSize: 16,
