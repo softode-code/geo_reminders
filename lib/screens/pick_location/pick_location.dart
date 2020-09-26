@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geo_reminders/models/location.dart';
 import 'package:geo_reminders/res/colors.dart';
 import 'package:geo_reminders/widgets/bottom_right_btn.dart';
 import 'package:geo_reminders/widgets/cross_button.dart';
@@ -118,7 +119,8 @@ class _PickLocationState extends State<PickLocation> {
                     text: 'Done',
                     iconData: Icons.done,
                     onPressed: () {
-                      widget.setCoordinates(_lastMapPosition);
+                      Location location = Location(latitude: _lastMapPosition.latitude, longitude: _lastMapPosition.longitude);
+                      widget.setCoordinates(location);
                       Navigator.pop(context);
                     } ,
                   )

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geo_reminders/database/db_helper.dart';
 import 'package:geo_reminders/models/location.dart';
+import 'package:geo_reminders/models/reminder.dart';
 import 'package:geo_reminders/res/colors.dart';
 import 'package:geo_reminders/screens/choose_from_locations/pick_from_saved_locations.dart';
 import 'package:geo_reminders/screens/pick_location/pick_location.dart';
@@ -10,8 +12,6 @@ import 'package:geo_reminders/screens/new_reminder/location_status.dart';
 import 'package:geo_reminders/widgets/cross_button.dart';
 import 'package:geo_reminders/widgets/header_with_underline.dart';
 import 'package:geo_reminders/widgets/outline_input_field_with_title.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import 'add_note.dart';
 
 class NewReminder extends StatefulWidget {
@@ -22,15 +22,11 @@ class NewReminder extends StatefulWidget {
 class _NewReminderState extends State<NewReminder> {
 
   final _formkey = GlobalKey<FormState>();
-  String _reminderName;
-  int _locationStatus;
-  String _note;
-  LatLng _coordinates;
   TimeOfDay _timeOfDay;
-  bool _remindToday = false;
   DateTime _dateTime;
-  bool _everyday = false;
-  Location _location;
+  Location _location = Location();
+
+  Reminder _reminder = Reminder(todayLocation: false, repeatEveryDay: false);
 
   OverlayEntry _overlayEntry;
   Offset buttonPosition;
@@ -72,10 +68,9 @@ class _NewReminderState extends State<NewReminder> {
     isMenuOpen = !isMenuOpen;
   }
 
-  void updateCoordinates(LatLng coordinates){
+  void updateCoordinates(Location location){
     setState(() {
-      _coordinates = coordinates;
-      _location = null;
+      _location = location;
     });
   }
 
@@ -102,7 +97,7 @@ class _NewReminderState extends State<NewReminder> {
                         hint: 'Add a reminder',
                         onChanged: (val) {
                           setState(() {
-                            _reminderName = val;
+                            _reminder.name = val;
                           });
                         },
                         validator: (val) => val.isEmpty ? 'Enter a reminder' : null,
@@ -140,7 +135,7 @@ class _NewReminderState extends State<NewReminder> {
                                         (){
                                           setState((){
                                             _timeOfDay = null;
-                                            _remindToday = true;
+                                            _reminder.todayLocation = true;
                                           });
                                           closeMenu();
                                         },
@@ -151,7 +146,7 @@ class _NewReminderState extends State<NewReminder> {
                                             .then((value) {
                                               setState(() {
                                                 _timeOfDay = value ?? _timeOfDay;
-                                                _remindToday = false;
+                                                _reminder.todayLocation = false;
                                               });
                                             });
                                           
@@ -164,10 +159,10 @@ class _NewReminderState extends State<NewReminder> {
                               child: Container(
                                 key: remindMeKey,
                                 child: Text(
-                                  _timeOfDay == null ? ( _remindToday ? 'Today (Location based)' : 'Add time') : (
+                                  _timeOfDay == null ? ( _reminder.todayLocation ? 'Today (Location based)' : 'Add time') : (
                                     _timeOfDay.hour.toString() +':' + _timeOfDay.minute.toString()
                                   ),
-                                  style: _timeOfDay != null || _remindToday ? Theme.of(context).textTheme.headline5 : Theme.of(context).textTheme.subtitle1,
+                                  style: _timeOfDay != null || _reminder.todayLocation? Theme.of(context).textTheme.headline5 : Theme.of(context).textTheme.subtitle1,
                                 ),
                               ),
                             ),
@@ -224,28 +219,28 @@ class _NewReminderState extends State<NewReminder> {
                                             () {
                                               closeMenu();
                                               setState(() {
-                                                _everyday = false;
+                                                _reminder.repeatEveryDay = false;
                                                 _dateTime = DateTime.now();
                                               });
                                             },
                                             () {
                                               closeMenu();
                                               setState(() {
-                                                _everyday = false;
+                                                _reminder.repeatEveryDay = false;
                                                 _dateTime = DateTime.now().add(Duration(days: 1));
                                               });
                                             },
                                             () {
                                               closeMenu();
                                               setState(() {
-                                                _everyday = false;
+                                                _reminder.repeatEveryDay = false;
                                                 _dateTime = DateTime.now().add(Duration(days: 7));
                                               });
                                             },
                                             (){
                                               closeMenu();
                                               setState(() {
-                                                _everyday = true;
+                                                _reminder.repeatEveryDay = true;
                                                 _dateTime = null;
                                               });
                                             },
@@ -256,7 +251,7 @@ class _NewReminderState extends State<NewReminder> {
                                                  firstDate: DateTime.now(), lastDate: DateTime.now().add(Duration(days: 365*5))
                                               ).then((value) {
                                                 setState(() {
-                                                  _everyday = false;
+                                                  _reminder.repeatEveryDay = false;
                                                   _dateTime = value ?? _dateTime;
                                                 });
                                               });
@@ -269,10 +264,10 @@ class _NewReminderState extends State<NewReminder> {
                                   child: Container(
                                     key: dueDateKey,
                                     child: Text(
-                                      _dateTime == null ? ( _everyday ? 'Everyday' : 'Set a due date') :(
+                                      _dateTime == null ? ( _reminder.repeatEveryDay ? 'Everyday' : 'Set a due date') :(
                                         _dateTime.day.toString() +' ' + _dateTime.month.toString() +', '+_dateTime.year.toString()
                                       ),
-                                      style: _dateTime != null || _everyday ? Theme.of(context).textTheme.headline5: Theme.of(context).textTheme.subtitle1,
+                                      style: _dateTime != null || _reminder.repeatEveryDay ? Theme.of(context).textTheme.headline5: Theme.of(context).textTheme.subtitle1,
                                     ),
                                   ),
                                 ),
@@ -322,12 +317,7 @@ class _NewReminderState extends State<NewReminder> {
                                           closeMenu();
                                           await Navigator.push(context, MaterialPageRoute(
                                             builder: (context) => PickFromSavedLocations(
-                                              onPick: (location) {
-                                                setState(() {
-                                                  _location = location;
-                                                  _coordinates = null;
-                                                });
-                                              },
+                                              onPick: (location) => updateCoordinates(location),
                                             )
                                           ));
                                         },
@@ -348,12 +338,12 @@ class _NewReminderState extends State<NewReminder> {
                               child: Container(
                                 key: pickLocationKey,
                                 child: Text(
-                                  _coordinates != null ? (_coordinates.latitude.toString() + ','+ _coordinates.longitude.toString()) :(
-                                    _location != null ? _location.name :'Pick a location'
+                                  _location.name ?? (_location.latitude != null ? (_location.latitude.toString() + ','+ _location.longitude.toString()) :
+                                    'Pick a location'
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
-                                  style: _coordinates != null || _location != null ? TextStyle(
+                                  style: _location.name != null || _location.latitude != null ? TextStyle(
                                     color: subtitleColor,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 16,
@@ -366,10 +356,10 @@ class _NewReminderState extends State<NewReminder> {
                       ),
                       SizedBox(height:10),
                       LocationStatus(
-                        locationStatus: _locationStatus,
-                        entering: () => setState(()=> _locationStatus =1),
-                        at :() => setState(()=> _locationStatus =2),
-                        leaving: () => setState(()=> _locationStatus =3),
+                        locationStatus: _reminder.locationStatus,
+                        entering: () => setState(()=> _reminder.locationStatus =1),
+                        at :() => setState(()=> _reminder.locationStatus =2),
+                        leaving: () => setState(()=> _reminder.locationStatus =3),
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 56, top: 10),
@@ -380,7 +370,7 @@ class _NewReminderState extends State<NewReminder> {
                       ),
                       SizedBox(height: 20,),
                       AddNote(
-                        onChange: (val)=> setState(()=>_note = val),
+                        onChange: (val)=> setState(()=>_reminder.note = val),
                       ),
                     ],
                   ),
@@ -391,8 +381,41 @@ class _NewReminderState extends State<NewReminder> {
                     BottomRightButton(
                       iconData: Icons.add,
                       text: 'Add reminder',
-                      onPressed: (){
+                      onPressed: () async {
+                        if(_timeOfDay != null){
+                          _reminder.hour = _timeOfDay.hour;
+                          _reminder.minute = _timeOfDay.minute;
+                        }
+                        if(_dateTime != null){
+                          _reminder.day = _dateTime.day;
+                          _reminder.month = _dateTime.month;
+                          _reminder.year = _dateTime.year;
+                        }
                         //TODO: add reminder to database and set a notification
+                        if(_location.id == null ) {
+                          if(_location.latitude != null){
+                            _location.id = await DBHelper().addLocation(_location);
+                          } else {
+                            //simple reminder
+                            if(_reminder.todayLocation){
+                              //throw error
+                            } else {
+                              //add reminder
+                              await DBHelper().addReminder(_reminder);
+                              print(_reminder.topMap());
+                              return;
+                            }
+                          }
+                        }
+                        //check for status
+                        _reminder.locationId = _location.id;
+                        if(_reminder.locationStatus == null) {
+                          //throw error
+                        } else {
+                          //geofence
+                          await DBHelper().addReminder(_reminder);
+                          print(_reminder.topMap());
+                        }
                       },
                     ),
                   ],
