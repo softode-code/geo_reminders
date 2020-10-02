@@ -6,6 +6,7 @@ import 'package:geo_reminders/models/reminder.dart';
 import 'package:geo_reminders/res/colors.dart';
 import 'package:geo_reminders/screens/choose_from_locations/pick_from_saved_locations.dart';
 import 'package:geo_reminders/screens/pick_location/pick_location.dart';
+import 'package:geo_reminders/services/notification.dart';
 import 'package:geo_reminders/widgets/bottom_right_btn.dart';
 import 'package:geo_reminders/widgets/custom_menu.dart';
 import 'package:geo_reminders/screens/new_reminder/location_status.dart';
@@ -401,8 +402,8 @@ class _NewReminderState extends State<NewReminder> {
                               //throw error
                             } else {
                               //add reminder
-                              await DBHelper().addReminder(_reminder);
-                              print(_reminder.topMap());
+                              _reminder.id =  await DBHelper().addReminder(_reminder);
+                              await NotificationService().addReminder(_reminder);
                               return;
                             }
                           }
