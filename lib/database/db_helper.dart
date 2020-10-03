@@ -79,6 +79,15 @@ class DBHelper {
     return reminders;
   }
 
+  Future<Reminder> getReminder(int id) async{
+    Database database = await db;
+    List<Map> maps = await database.rawQuery('SELECT * FROM $REMINDERS_TABLE WHERE $ID = '+ id.toString());
+    if(maps.length > 0){
+      return Reminder.fromMap(maps[0]);
+    }
+    return null;
+  }
+
 
   Future addReminder(Reminder reminder) async {
     Database database = await db;

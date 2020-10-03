@@ -60,7 +60,6 @@ class NotificationService{
   }
 
     Future addReminder(Reminder reminder) async {
-      
       NotificationDetails notificationDetails = NotificationDetails(
         androidPlatformChannelSpecifics, iosPlatformChannelSpecifics
       );
@@ -89,6 +88,18 @@ class NotificationService{
           payload: reminder.id.toString()
         );
       }
+    }
+
+    Future showReminder(Reminder reminder) async {
+      NotificationDetails notificationDetails = NotificationDetails(
+        androidPlatformChannelSpecifics, iosPlatformChannelSpecifics
+      );
+      await FlutterLocalNotificationsPlugin().show(
+        reminder.id,
+        reminder.name,
+        reminder.note,
+        notificationDetails
+      );
     }
     
 }

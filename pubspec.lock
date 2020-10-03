@@ -8,6 +8,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.5.0-nullsafety"
+  background_fetch:
+    dependency: transitive
+    description:
+      name: background_fetch
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -76,6 +83,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_background_geolocation:
+    dependency: "direct main"
+    description:
+      name: flutter_background_geolocation
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.10.1"
   flutter_local_notifications:
     dependency: "direct main"
     description:
