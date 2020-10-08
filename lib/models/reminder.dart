@@ -52,7 +52,7 @@ class Reminder{
       completed = map[DBHelper.COMPLETED] ==1 ? true : false;
       repeatEveryDay = map[DBHelper.REPEAT_EVERYDAY] ==1 ? true : false;
       todayLocation = map[DBHelper.TODAY_LOCATION] ==1 ? true : false;
-      locationStatus : map[DBHelper.LOCATION_STATUS];
+      locationStatus = map[DBHelper.LOCATION_STATUS];
   }
 
 }

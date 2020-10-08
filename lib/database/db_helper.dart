@@ -94,4 +94,9 @@ class DBHelper {
     return await database.insert(REMINDERS_TABLE, reminder.topMap());
   }
 
+  Future updateReminder(Reminder reminder) async {
+    Database database = await db;
+    return await database.update(REMINDERS_TABLE, reminder.topMap(), where: '$ID = ?', whereArgs: [reminder.id]);
+  }
+
 }

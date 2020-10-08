@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:geo_reminders/database/db_helper.dart';
 import 'package:geo_reminders/models/reminder.dart';
 import 'package:geo_reminders/res/colors.dart';
 
-class ReminderTile extends StatelessWidget {
+class ReminderTile extends StatefulWidget {
   const ReminderTile({
     Key key,
     @required this.reminder,
@@ -10,6 +11,11 @@ class ReminderTile extends StatelessWidget {
 
   final Reminder reminder;
 
+  @override
+  _ReminderTileState createState() => _ReminderTileState();
+}
+
+class _ReminderTileState extends State<ReminderTile> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -21,16 +27,24 @@ class ReminderTile extends StatelessWidget {
           //mark as done circle
           Row(
             children: [
-              Container(
-                height: 20,
-                width: 20,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.transparent,
-                  border: Border.all(
-                    color: primaryColor,
-                    width: 1
-                  )
+              InkWell(
+                onTap: () async {
+                  widget.reminder.completed = !widget.reminder.completed;
+                  await DBHelper().updateReminder(widget.reminder);
+                  setState((){});
+                },
+                child: Container(
+                  height: 20,
+                  width: 20,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.transparent,
+                    border: widget.reminder.completed ? null :Border.all(
+                      color: primaryColor,
+                      width: 1
+                    )
+                  ),
+                  child: widget.reminder.completed ? Icon(Icons.done, size: 20, color: primaryColor,) : SizedBox.shrink(),
                 ),
               ),
               SizedBox(width: 15),
@@ -38,7 +52,7 @@ class ReminderTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    reminder.name,
+                    widget.reminder.name,
                     style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
@@ -46,7 +60,7 @@ class ReminderTile extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    reminder.note ?? '',
+                    widget.reminder.note ?? '',
                     style: TextStyle(
                       color: hintColor,
                       fontSize: 12.0,
@@ -59,7 +73,7 @@ class ReminderTile extends StatelessWidget {
                       Icon(Icons.location_on_outlined, size: 19, color: hintColor,),
                       SizedBox(width:8),
                       Text(
-                        reminder.locationStatus == 2 ? 'Entering' : 'Leaving',
+                        widget.reminder.locationStatus == 1 ? 'Entering' : 'Leaving',
                         style: TextStyle(
                           fontSize: 12.0,
                           color: hintColor
