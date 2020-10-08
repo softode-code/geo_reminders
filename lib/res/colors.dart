@@ -7,7 +7,7 @@ Color disabledColor = Color(0xFFB0B0B0);
 //80%
 Color subtitleColor = Color(0xA6000000);
 Color titleColor = Color(0xCC000000);
-//66%
+//60%
 Color hintColor = Color(0x99000000);
 List<Color> locationColors = [
   Color(4280068036),
